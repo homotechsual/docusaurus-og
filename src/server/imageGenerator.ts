@@ -18,6 +18,8 @@ export type ImageGeneratorResult = {
     absolutePath: string
 }
 
+const UNSUPPORTED_STYLE_PROPS = new Set(['zindex'])
+
 export class ImageGenerator {
     private satori: typeof Satori
     private siteCache: Set<string> = new Set()
@@ -71,7 +73,13 @@ export class ImageGenerator {
         element: React.ReactNode,
         options: ImageGeneratorOptions,
     ): Promise<ImageGeneratorResult> => {
-        const hash = hashObj([element, options])
+        const sanitizedElement = sanitizeSatoriNode(element)
+
+        if (!isRenderableSatoriNode(sanitizedElement)) {
+            throw new Error('Renderer returned an unsupported root node for Satori')
+        }
+
+        const hash = hashObj([sanitizedElement, options])
 
         const imageName = `${hash}.png`
         const absolutePath = path.join(this.outDir, imageName)
@@ -101,7 +109,7 @@ export class ImageGenerator {
             return result
         }
 
-        const svg = await this.satori(element, options)
+        const svg = await this.satori(sanitizedElement, options)
         const pngBuffer = new Resvg(svg).render().asPng()
         this.writeQueue.addWrite(absolutePath, pngBuffer)
         
@@ -121,4 +129,92 @@ export class ImageGenerator {
             }
         }
     }
+}
+
+function sanitizeSatoriNode(node: React.ReactNode): React.ReactNode {
+    if (Array.isArray(node)) {
+        let changed = false
+        const sanitizedNodes = node.map((child) => {
+            const sanitizedChild = sanitizeSatoriNode(child)
+            changed = changed || sanitizedChild !== child
+            return sanitizedChild
+        })
+
+        return changed ? sanitizedNodes : node
+    }
+
+    if (
+        node === null ||
+        node === undefined ||
+        typeof node === 'boolean' ||
+        typeof node === 'string' ||
+        typeof node === 'number'
+    ) {
+        return node
+    }
+
+    if (!React.isValidElement(node)) {
+        logger.warn(
+            `Dropping unsupported Satori node: ${getNodeDebugValue(node)}`,
+        )
+        return null
+    }
+
+    const sanitizedStyle = sanitizeStyle(node.props.style)
+    const originalChildren = node.props.children
+    const sanitizedChildren = sanitizeSatoriNode(originalChildren)
+    const styleChanged = sanitizedStyle !== node.props.style
+    const childrenChanged = sanitizedChildren !== originalChildren
+
+    if (!styleChanged && !childrenChanged) {
+        return node
+    }
+
+    const nextProps = styleChanged ? { style: sanitizedStyle } : undefined
+
+    return childrenChanged
+        ? React.cloneElement(node, nextProps, sanitizedChildren)
+        : React.cloneElement(node, nextProps)
+}
+
+function sanitizeStyle(
+    style: React.CSSProperties | undefined,
+): React.CSSProperties | undefined {
+    if (!style) {
+        return style
+    }
+
+    let changed = false
+    const sanitizedStyle: Record<string, unknown> = {}
+
+    Object.entries(style).forEach(([key, value]) => {
+        if (UNSUPPORTED_STYLE_PROPS.has(normalizeStylePropName(key))) {
+            changed = true
+            return
+        }
+
+        sanitizedStyle[key] = value
+    })
+
+    return changed ? (sanitizedStyle as React.CSSProperties) : style
+}
+
+function normalizeStylePropName(key: string): string {
+    return key.replace(/-/g, '').toLowerCase()
+}
+
+function isRenderableSatoriNode(node: React.ReactNode): boolean {
+    return !(node === null || node === undefined || typeof node === 'boolean')
+}
+
+function getNodeDebugValue(node: unknown): string {
+    if (typeof node === 'function') {
+        return `function ${node.name || '(anonymous)'}`
+    }
+
+    if (typeof node === 'object') {
+        return Object.prototype.toString.call(node)
+    }
+
+    return String(node)
 }

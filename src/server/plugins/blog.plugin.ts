@@ -41,36 +41,61 @@ export class BlogPlugin extends BasePlugin<BlogPageItem> {
     protected loadInstance = async (plugin: LoadedPlugin) => {
         const content = plugin.content as BlogContent
         const options = plugin.options as BlogPluginOptions
+        const paginated = Array.isArray(content?.blogListPaginated)
+            ? content.blogListPaginated
+            : []
+        const posts = Array.isArray(content?.blogPosts) ? content.blogPosts : []
+        const blogTags =
+            content?.blogTags && typeof content.blogTags === 'object'
+                ? content.blogTags
+                : {}
 
-        content.blogListPaginated.forEach((value) => {
+        paginated.forEach((value) => {
+            const permalink = value?.metadata?.permalink
+
+            if (typeof permalink !== 'string' || !permalink) {
+                return
+            }
+
             this.pages.push({
                 data: value,
                 plugin: options,
                 pageType: 'list',
-                permalink: value.metadata.permalink,
+                permalink,
             })
         })
 
-        content.blogPosts.forEach((post) => {
+        posts.forEach((post) => {
+            const permalink = post?.metadata?.permalink
+
+            if (typeof permalink !== 'string' || !permalink) {
+                return
+            }
+
             this.pages.push({
                 data: post,
                 plugin: options,
                 pageType: 'post',
-                permalink: post.metadata.permalink,
+                permalink,
             })
         })
 
-        if (content.blogTagsListPath) {
-            const filePath = this.getHtmlPathFromPermalink(content.blogTagsListPath)
+        const blogTagsListPath =
+            typeof content?.blogTagsListPath === 'string'
+                ? content.blogTagsListPath
+                : undefined
+
+        if (blogTagsListPath) {
+            const filePath = this.getHtmlPathFromPermalink(blogTagsListPath)
 
             fs.existsSync(filePath) &&
                 this.pages.push({
                     pageType: 'tags',
                     plugin: options,
                     data: {
-                        permalink: content.blogTagsListPath,
+                        permalink: blogTagsListPath,
                     },
-                    permalink: content.blogTagsListPath,
+                    permalink: blogTagsListPath,
                 })
         }
 
@@ -91,13 +116,21 @@ export class BlogPlugin extends BasePlugin<BlogPageItem> {
         }
 
         {
-            Object.entries(content.blogTags).map(([key, value]) => {
-                value.pages.forEach((page) => {
+            Object.entries(blogTags).forEach(([, value]) => {
+                const pages = Array.isArray(value?.pages) ? value.pages : []
+
+                pages.forEach((page) => {
+                    const permalink = page?.metadata?.permalink
+
+                    if (typeof permalink !== 'string' || !permalink) {
+                        return
+                    }
+
                     this.pages.push({
                         pageType: 'tag',
                         plugin: options,
                         data: { ...page.metadata, label: value.label },
-                        permalink: page.metadata.permalink,
+                        permalink,
                     })
                 })
             })

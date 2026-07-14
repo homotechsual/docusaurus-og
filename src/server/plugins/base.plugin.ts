@@ -91,41 +91,49 @@ export abstract class BasePlugin<T> {
 
         for (const page of this.pages) {
             const permalink = this.getPagePermalink(page)
-            const htmlPath = this.getPageHtmlPath(page)
+            try {
+                const htmlPath = this.getPageHtmlPath(page)
 
-            bar.update({ suffix: permalink })
+                bar.update({ suffix: permalink })
 
-            if (!htmlPath) {
-                bar.increment()
-                continue
-            }
+                if (!htmlPath) {
+                    bar.increment()
+                    continue
+                }
 
-            const document = new Document(htmlPath, this.writeQueue)
-            await document.load()
+                const document = new Document(htmlPath, this.writeQueue)
+                await document.load()
 
-            if (!document.loaded) {
-                bar.increment()
-                continue
-            }
+                if (!document.loaded) {
+                    bar.increment()
+                    continue
+                }
 
-            const image = await this.imageRenderer(
-                {
-                    ...page,
-                    document,
-                    websiteOutDir: this.context.outDir,
-                },
-                this.context,
-            )
+                const image = await this.imageRenderer(
+                    {
+                        ...page,
+                        document,
+                        websiteOutDir: this.context.outDir,
+                    },
+                    this.context,
+                )
 
-            if (!image) {
+                if (!image) {
+                    bar.increment()
+                    continue
+                }
+
+                const generated = await this.imageGenerator.generate(...image)
+                await document.setImage(generated.url)
                 await document.write()
-                bar.increment()
-                continue
+            } catch (error) {
+                logger.warn(
+                    `Skipping ${this.pageType} OG image for ${permalink}: ${
+                        error instanceof Error ? error.message : String(error)
+                    }`,
+                )
             }
 
-            const generated = await this.imageGenerator.generate(...image)
-            await document.setImage(generated.url)
-            await document.write()
             bar.increment()
         }
         bar.stop()
