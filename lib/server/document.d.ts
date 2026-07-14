@@ -5,6 +5,8 @@ export declare class Document {
     private writeQueue;
     root: HTMLElement;
     loaded: boolean;
+    private originalHtml;
+    private dirty;
     constructor(path: string, writeQueue: WriteQueue);
     load: () => Promise<void>;
     write: () => Promise<void>;
@@ -12,4 +14,5 @@ export declare class Document {
     get head(): HTMLElement;
     private getMeta;
     private updateMeta;
+    private serializeHtml;
 }
