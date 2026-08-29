@@ -1,5 +1,3 @@
-/// <reference types="node" />
-/// <reference types="node" />
 import { EventEmitter } from 'events';
 export declare class WriteQueue extends EventEmitter {
     private q;
