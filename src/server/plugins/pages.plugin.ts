@@ -50,10 +50,7 @@ export class PagesPlugin extends BasePlugin<PagesPageItem> {
             const title =
                 (doc.loaded && doc.root.querySelector('title')?.textContent) || ''
 
-            const description =
-                (doc.loaded &&
-                    doc.root.querySelector('meta[name=description]')?.textContent) ||
-                ''
+            const description = (doc.loaded && doc.root.querySelector('meta[name=description]')?.getAttribute('content')) || '';
 
             this.pages.push({
                 metadata: {
