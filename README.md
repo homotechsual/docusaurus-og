@@ -76,6 +76,14 @@ export const docs: ImageRenderer<DocsPageData> = (data, context) => [
 ]
 ```
 
+### Background Images
+
+Image generation goes through `satori(element) → svg string → new Resvg(svg).render().asPng()`. Satori doesn't rasterize `<img>` sources itself — it just emits an `<image href="...">` reference into the SVG it produces, and the final rasterization to PNG is entirely [`@resvg/resvg-js`](https://github.com/thx/resvg-js)'s job.
+
+`resvg` has limited-to-no support for `<image>` elements whose source is itself an SVG (i.e. `<image href="data:image/svg+xml;base64,...">`, or a `.svg` file loaded the same way). It resolves the reference without erroring, but silently renders nothing for that element — so a background built as a composited SVG (rotation transforms, clip-paths, an embedded raster image, gradients, etc.) referenced via `<img src="data:image/svg+xml;...">` in your renderer can come out blank where the background should be, with everything else on the image rendering fine.
+
+Flat raster images (PNG/JPEG) referenced via `<image>` work as expected. Simple flat SVGs (e.g. a `<rect>` with a `linearGradient` fill, no nested `<image>`) also work fine. If your background needs to be a more complex composite, rasterize it to a PNG ahead of time rather than shipping it as SVG — don't rely on `resvg` to flatten a background SVG containing its own embedded images at render time.
+
 ### JSX Support
 
 If you wish to use JSX within your image renderer, you'll need to compile your code to JavaScript. Here's a TypeScript example:
