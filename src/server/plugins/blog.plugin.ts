@@ -2,6 +2,11 @@ import {
     BlogContent,
     PluginOptions as BlogPluginOptions,
 } from '@docusaurus/plugin-content-blog'
+import {
+    paginateBlogPosts,
+    shouldBeListed,
+} from '@docusaurus/plugin-content-blog/lib/blogUtils.js'
+import { normalizeUrl } from '@docusaurus/utils'
 import { LoadedPlugin, Props } from '@docusaurus/types'
 import * as fs from 'fs'
 import * as path from 'path'
@@ -41,14 +46,29 @@ export class BlogPlugin extends BasePlugin<BlogPageItem> {
     protected loadInstance = async (plugin: LoadedPlugin) => {
         const content = plugin.content as BlogContent
         const options = plugin.options as BlogPluginOptions
-        const paginated = Array.isArray(content?.blogListPaginated)
-            ? content.blogListPaginated
-            : []
         const posts = Array.isArray(content?.blogPosts) ? content.blogPosts : []
         const blogTags =
             content?.blogTags && typeof content.blogTags === 'object'
                 ? content.blogTags
                 : {}
+
+        // `content: BlogContent` doesn't expose the paginated blog-list pages
+        // (Docusaurus only builds that locally while generating routes), so
+        // recompute it the same way plugin-content-blog's own routes.ts does.
+        const listedBlogPosts = posts.filter(shouldBeListed)
+        const paginated = listedBlogPosts.length
+            ? paginateBlogPosts({
+                  blogPosts: listedBlogPosts,
+                  blogTitle: content?.blogTitle ?? '',
+                  blogDescription: content?.blogDescription ?? '',
+                  postsPerPageOption: options.postsPerPage,
+                  basePageUrl: normalizeUrl([
+                      this.context.siteConfig.baseUrl,
+                      options.routeBasePath,
+                  ]),
+                  pageBasePath: options.pageBasePath,
+              })
+            : []
 
         paginated.forEach((value) => {
             const permalink = value?.metadata?.permalink
