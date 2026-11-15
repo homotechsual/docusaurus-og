@@ -7,6 +7,7 @@ import { blog, docs, pages } from './imageRenderers.js'
 const config: Config = {
   title: 'OpenGraph Images for Docusaurus',
   tagline: 'Generate custom social preview images for your Docusaurus site',
+  favicon: 'img/favicon.svg',
   url: 'https://og.docusaurus.homotechsual.dev',
   baseUrl: '/',
   onBrokenLinks: 'throw',
