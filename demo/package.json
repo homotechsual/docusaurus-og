@@ -11,9 +11,12 @@
   "dependencies": {
     "@docusaurus/core": "^3.10.2",
     "@docusaurus/preset-classic": "^3.10.2",
+    "@docusaurus/utils": "^3.10.2",
     "@fontsource/inter": "^5.2.6",
     "@homotechsual/docusaurus-og": "workspace:*",
     "@mdx-js/react": "^3.1.1",
+    "@resvg/resvg-js": "^2.6.2",
+    "prism-react-renderer": "^2.4.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },

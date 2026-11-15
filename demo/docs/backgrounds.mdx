@@ -1,0 +1,74 @@
+---
+sidebar_position: 2
+title: Custom backgrounds
+description: Use a local PNG, JPEG, or simple SVG as the background for generated OpenGraph images.
+og_background: svg
+---
+
+import GeneratedImage from '@site/src/components/GeneratedImage'
+
+# Custom backgrounds
+
+The [homepage](/#generated-example) displays its actual PNG-background preview.
+This page uses the same artwork as an SVG directly; the image below is this
+page's generated OG image, not the source SVG:
+
+<GeneratedImage alt="Generated social preview for the custom backgrounds guide using an SVG background" />
+
+Both examples use the same renderer. The guide's `og_background: svg` front
+matter selects the SVG; other demo pages use the PNG.
+
+Put a PNG, JPEG, or simple SVG under your site's `static/img` directory. Load
+it in your renderer as a data URL, then place an image behind the text:
+
+```js
+const { readFileSync } = require('node:fs')
+const path = require('node:path')
+const React = require('react')
+
+// For PNG use image/png and og-background.png instead.
+const background = `data:image/svg+xml;base64,${readFileSync(
+  path.join(__dirname, '../static/img/og-background.svg'),
+).toString('base64')}`
+
+// Use this as the element returned by your image renderer.
+const image = React.createElement(
+  'div',
+  {
+    style: {
+      display: 'flex',
+      position: 'relative',
+      width: 1200,
+      height: 630,
+      backgroundColor: '#263141',
+    },
+  },
+  React.createElement('img', {
+    src: background,
+    alt: '',
+    style: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+    },
+  }),
+  React.createElement('div', {
+    style: { position: 'relative', color: '#fff', fontSize: 64, padding: 72 },
+  }, 'Your page title'),
+)
+```
+
+This example assumes the renderer is in a `lib` directory beside `static`.
+Adjust the path for your project. Return `[image, options]` from your renderer;
+`options` must include the dimensions and font data used by the text. See the
+[complete demo renderer](https://github.com/homotechsual/docusaurus-og/blob/main/demo/imageRenderers.js).
+
+Satori passes image references to Resvg for rasterization. The demo's SVG uses
+gradients and simple shapes and works with this pipeline. More complex SVG
+compositions, especially those containing embedded raster images, may render
+blank or incorrectly; test the generated PNG rather than relying on a
+successful build. Export complex artwork to PNG if necessary. The demo keeps
+both its SVG source and a rasterized PNG alongside it.

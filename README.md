@@ -23,7 +23,11 @@ yarn workspace docusaurus-og-demo build
 ```
 
 The generated site is written to `demo/build`, with OG images under
-`demo/build/og-images`.
+`demo/build/og-images`. The demo homepage displays its generated image, and
+the [custom backgrounds guide](https://og.docusaurus.homotechsual.dev/docs/backgrounds)
+shows how the renderer uses local PNG and SVG backgrounds, including a
+generated SVG-background preview. Images are generated during the production
+build, so the preview is not available during `yarn start`.
 
 ## Installation
 
@@ -103,9 +107,12 @@ export const docs: ImageRenderer<DocsPageData> = (data, context) => [
 
 Image generation goes through `satori(element) → svg string → new Resvg(svg).render().asPng()`. Satori doesn't rasterize `<img>` sources itself — it just emits an `<image href="...">` reference into the SVG it produces, and the final rasterization to PNG is entirely [`@resvg/resvg-js`](https://github.com/thx/resvg-js)'s job.
 
-`resvg` has limited-to-no support for `<image>` elements whose source is itself an SVG (i.e. `<image href="data:image/svg+xml;base64,...">`, or a `.svg` file loaded the same way). It resolves the reference without erroring, but silently renders nothing for that element — so a background built as a composited SVG (rotation transforms, clip-paths, an embedded raster image, gradients, etc.) referenced via `<img src="data:image/svg+xml;...">` in your renderer can come out blank where the background should be, with everything else on the image rendering fine.
-
-Flat raster images (PNG/JPEG) referenced via `<image>` work as expected. Simple flat SVGs (e.g. a `<rect>` with a `linearGradient` fill, no nested `<image>`) also work fine. If your background needs to be a more complex composite, rasterize it to a PNG ahead of time rather than shipping it as SVG — don't rely on `resvg` to flatten a background SVG containing its own embedded images at render time.
+PNG and JPEG backgrounds work, as do simple SVGs such as the demo's gradient
+and shapes. More complex SVG compositions, especially those containing embedded
+raster images, may render blank or incorrectly without an error. Check the
+generated PNG and rasterize the background to PNG ahead of time if necessary.
+The [demo guide](https://og.docusaurus.homotechsual.dev/docs/backgrounds) shows
+how to load a local SVG or PNG as a data URL.
 
 ### JSX Support
 

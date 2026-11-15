@@ -9,6 +9,15 @@ const interRegular = readFileSync(
 const interBold = readFileSync(
   require.resolve('@fontsource/inter/files/inter-latin-700-normal.woff'),
 )
+function loadBackground(filename, mimeType) {
+  const data = readFileSync(new URL(`./static/img/${filename}`, import.meta.url))
+  return `data:${mimeType};base64,${data.toString('base64')}`
+}
+
+const backgrounds = {
+  png: loadBackground('og-background.png', 'image/png'),
+  svg: loadBackground('og-background.svg', 'image/svg+xml'),
+}
 
 const imageOptions = {
   width: 1200,
@@ -19,15 +28,16 @@ const imageOptions = {
   ],
 }
 
-function renderImage(label, title, description) {
+function renderImage(label, title, description, background = backgrounds.png) {
   return [
     createElement(
       'div',
       {
         style: {
+          position: 'relative',
           alignItems: 'flex-start',
-          backgroundColor: '#111827',
-          color: '#f9fafb',
+          backgroundColor: '#263141',
+          color: '#fcfcfc',
           display: 'flex',
           flexDirection: 'column',
           height: '100%',
@@ -36,11 +46,24 @@ function renderImage(label, title, description) {
           width: '100%',
         },
       },
+      createElement('img', {
+        src: background,
+        alt: '',
+        style: {
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+        },
+      }),
       createElement(
         'div',
         {
           style: {
-            color: '#a5b4fc',
+            position: 'relative',
+            color: '#f2bab6',
             fontSize: 24,
             fontWeight: 700,
             marginBottom: 24,
@@ -52,6 +75,7 @@ function renderImage(label, title, description) {
         'div',
         {
           style: {
+            position: 'relative',
             fontSize: 64,
             fontWeight: 700,
             lineHeight: 1.1,
@@ -64,6 +88,7 @@ function renderImage(label, title, description) {
         'div',
         {
           style: {
+            position: 'relative',
             color: '#d1d5db',
             fontSize: 28,
             lineHeight: 1.35,
@@ -77,7 +102,14 @@ function renderImage(label, title, description) {
 }
 
 export const docs = (data) =>
-  renderImage('DOCUMENTATION', data.metadata.title, data.metadata.description)
+  renderImage(
+    'DOCUMENTATION',
+    data.metadata.title,
+    data.metadata.description,
+    data.metadata.frontMatter?.og_background === 'svg'
+      ? backgrounds.svg
+      : backgrounds.png,
+  )
 
 export const blog = (data) => {
   const title =
