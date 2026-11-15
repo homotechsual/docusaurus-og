@@ -153,7 +153,12 @@ function sanitizeSatoriNode(node: React.ReactNode): React.ReactNode {
         return node
     }
 
-    if (!React.isValidElement(node)) {
+    if (
+        !React.isValidElement<{
+            style?: React.CSSProperties
+            children?: React.ReactNode
+        }>(node)
+    ) {
         logger.warn(
             `Dropping unsupported Satori node: ${getNodeDebugValue(node)}`,
         )
