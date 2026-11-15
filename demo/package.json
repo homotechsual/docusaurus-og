@@ -1,0 +1,27 @@
+{
+  "name": "docusaurus-og-demo",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "yarn workspace @homotechsual/docusaurus-og build && docusaurus start",
+    "build": "yarn workspace @homotechsual/docusaurus-og build && docusaurus build && node scripts/check-og-output.mjs",
+    "serve": "docusaurus serve",
+    "clear": "docusaurus clear"
+  },
+  "dependencies": {
+    "@docusaurus/core": "^3.10.2",
+    "@docusaurus/preset-classic": "^3.10.2",
+    "@fontsource/inter": "^5.2.6",
+    "@homotechsual/docusaurus-og": "workspace:*",
+    "@mdx-js/react": "^3.1.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "^3.10.2",
+    "@docusaurus/tsconfig": "^3.10.2",
+    "@docusaurus/types": "^3.10.2",
+    "@types/react": "^19.3.0",
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,0 +1,61 @@
+name: Deploy Demo
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.head.ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'yarn'
+
+      - run: yarn install --immutable
+      - run: yarn workspace docusaurus-og-demo build
+
+      - name: Deploy to Cloudflare Pages
+        id: cloudflare-pages
+        uses: cloudflare/wrangler-action@v4
+        with:
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: pages deploy demo/build --project-name=docusaurus-og
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Write deployment summary
+        env:
+          DEPLOYMENT_URL: ${{ steps.cloudflare-pages.outputs.deployment-url }}
+          PREVIEW_URL: ${{ steps.cloudflare-pages.outputs.pages-deployment-alias-url }}
+          ENVIRONMENT: ${{ steps.cloudflare-pages.outputs.pages-environment }}
+        run: |
+          {
+            echo "## Cloudflare Pages deployment"
+            echo
+            echo "| Name | Result |"
+            echo "| --- | --- |"
+            echo "| Deployment URL | [$DEPLOYMENT_URL]($DEPLOYMENT_URL) |"
+            echo "| Preview URL | [$PREVIEW_URL]($PREVIEW_URL) |"
+            echo "| Environment | $ENVIRONMENT |"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -4,18 +4,41 @@ Docusaurus OG enables you to automate the generation of custom OpenGraph (OG) im
 
 This plugin leverages [Vercel's Satori](https://github.com/vercel/satori) to convert your HTML and CSS into images. It lets you define image renderers tailored to each Docusaurus content plugin, allowing you to create unique OG images for your website's content.
 
+This is the [Homotechsual](https://github.com/homotechsual) maintained fork of [Kas-tle/docusaurus-og](https://github.com/Kas-tle/docusaurus-og). It is maintained independently of upstream.
+
+## Demo
+
+The repository includes a Docusaurus site that exercises the docs, blog, and
+pages renderers. Run it from the repository root:
+
+```bash
+yarn install
+yarn workspace docusaurus-og-demo start
+```
+
+To build the site and generate its OpenGraph images:
+
+```bash
+yarn workspace docusaurus-og-demo build
+```
+
+The generated site is written to `demo/build`, with OG images under
+`demo/build/og-images`.
+
 ## Installation
+
+Requires Node.js 22 or later.
 
 To get started, simply follow these steps:
 
 1. Install the plugin:
 
 ```bash
-yarn add @acid-info/docusaurus-og
+yarn add @homotechsual/docusaurus-og
 
 # or
 
-npm install @acid-info/docusaurus-og
+npm install @homotechsual/docusaurus-og
 ```
 
 2. Integrate the plugin into your `docusaurus.config.js`:
@@ -23,7 +46,7 @@ npm install @acid-info/docusaurus-og
 ```js
 plugins: [
   [
-    '@acid-info/docusaurus-og',
+    '@homotechsual/docusaurus-og',
     {
       path: './preview-images', // relative to the build directory
       imageRenderers: {},
@@ -50,7 +73,7 @@ For example, here's an image renderer for the `@docusaurus/plugin-content-docs` 
 
 ```tsx
 // src/ImageRenderers.tsx
-import type { DocsPageData, ImageRenderer } from '@acid-info/docusaurus-og'
+import type { DocsPageData, ImageRenderer } from '@homotechsual/docusaurus-og'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import React from 'react'
@@ -135,7 +158,7 @@ echo "lib" >> .gitignore
 ```js
 plugins: [
   [
-    '@acid-info/docusaurus-og',
+    '@homotechsual/docusaurus-og',
     {
       path: './preview-images', // relative to the build directory
       imageRenderers: {
