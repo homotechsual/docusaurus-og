@@ -57,7 +57,7 @@ export default function Home(): React.JSX.Element {
             <Link className="button button--secondary button--lg" to="#generated-example">
               See the Demo →
             </Link>
-            <Link className={`button button--outline button--secondary button--lg ${styles.docsButton}`} to="/docs/intro">
+            <Link className="button button--outline button--secondary button--lg" to="/docs/intro">
               Read the Docs
             </Link>
           </div>

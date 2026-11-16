@@ -52,10 +52,21 @@ const config: Config = {
   themeConfig: {
     navbar: {
       title: 'Docusaurus OG',
+      logo: { alt: 'Docusaurus OG', src: 'img/favicon.svg' },
       items: [
         { type: 'docSidebar', sidebarId: 'tutorialSidebar', label: 'Docs', position: 'left' },
         { to: '/blog', label: 'Blog', position: 'left' },
-        { href: 'https://docs.homotechsual.dev/', label: 'Other Projects', position: 'right' },
+        {
+          label: 'More Projects',
+          position: 'right',
+          items: [
+            { label: 'FAQs', href: 'https://faqs.docusaurus.homotechsual.dev/' },
+            { label: 'Showcase', href: 'https://showcase.docusaurus.homotechsual.dev/' },
+            { label: 'Plausible', href: 'https://plausible.docusaurus.homotechsual.dev/' },
+            { label: 'Waypoint', href: 'https://waypoint.docusaurus.homotechsual.dev/' },
+            { label: 'All Projects', href: 'https://docs.homotechsual.dev/' },
+          ],
+        },
         { href: 'https://github.com/sponsors/homotechsual', label: 'Sponsor', position: 'right' },
         { href: 'https://github.com/homotechsual/docusaurus-og', label: 'GitHub', position: 'right' },
       ],
