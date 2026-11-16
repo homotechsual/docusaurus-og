@@ -60,5 +60,5 @@ footer {
 }
 
 .heart {
-  color: #e3594f;
+  color: var(--ifm-navbar-link-hover-color);
 }
