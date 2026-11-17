@@ -3280,6 +3280,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@homotechsual/docusaurus-plugin-plausible@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@homotechsual/docusaurus-plugin-plausible@npm:1.1.1"
+  peerDependencies:
+    "@docusaurus/core": ">=3.0.0 <5.0.0"
+    "@mdx-js/react": ">=3.0.0"
+    react: ~19.2.7
+    react-dom: ~19.2.7
+  checksum: 10c0/ca7e8584a75e9a05a7d382ad0360e239a8e293d7be56e88e96542d32121e4c082c0f84c3499b1132c6f96751fee382ed3f507d3d3f694d79a142996fa5869b9f
+  languageName: node
+  linkType: hard
+
 "@isaacs/balanced-match@npm:^4.0.1":
   version: 4.0.1
   resolution: "@isaacs/balanced-match@npm:4.0.1"
@@ -6967,6 +6979,7 @@ __metadata:
     "@docusaurus/utils": "npm:^3.10.2"
     "@fontsource/inter": "npm:^5.2.6"
     "@homotechsual/docusaurus-og": "workspace:*"
+    "@homotechsual/docusaurus-plugin-plausible": "npm:^1.1.1"
     "@mdx-js/react": "npm:^3.1.1"
     "@resvg/resvg-js": "npm:^2.6.2"
     "@types/react": "npm:^19.3.0"

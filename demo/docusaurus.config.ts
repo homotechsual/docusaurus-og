@@ -3,6 +3,7 @@ import type * as Preset from '@docusaurus/preset-classic'
 import { DOCUSAURUS_VERSION } from '@docusaurus/utils'
 import { themes as prismThemes } from 'prism-react-renderer'
 import { blog, docs, pages } from './imageRenderers.js'
+import plausiblePlugin, { type PluginOptions as PlausibleOptions } from '@homotechsual/docusaurus-plugin-plausible'
 
 const config: Config = {
   title: 'OpenGraph Images for Docusaurus',
@@ -21,6 +22,13 @@ const config: Config = {
     locales: ['en'],
   },
   plugins: [
+    [
+      plausiblePlugin,
+      {
+        domain: 'og.docusaurus.homotechsual.dev',
+        outboundLinks: true,
+      } satisfies PlausibleOptions,
+    ],
     [
       '@homotechsual/docusaurus-og',
       {
