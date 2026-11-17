@@ -3275,8 +3275,12 @@ __metadata:
     lodash: "npm:^4.18.1"
     node-html-parser: "npm:^9.0.7"
     object-hash: "npm:^3.0.0"
+    react: "npm:^19.3.1"
     satori: "npm:^0.63.2"
+    tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
+  peerDependencies:
+    react: ^18.0.0 || ^19.0.0
   languageName: unknown
   linkType: soft
 

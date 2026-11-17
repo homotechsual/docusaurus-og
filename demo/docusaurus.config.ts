@@ -3,6 +3,7 @@ import type * as Preset from '@docusaurus/preset-classic'
 import { DOCUSAURUS_VERSION } from '@docusaurus/utils'
 import { themes as prismThemes } from 'prism-react-renderer'
 import { blog, docs, pages } from './imageRenderers.js'
+import ogPlugin from '../lib/index.js'
 import plausiblePlugin, { type PluginOptions as PlausibleOptions } from '@homotechsual/docusaurus-plugin-plausible'
 
 const config: Config = {
@@ -30,7 +31,7 @@ const config: Config = {
       } satisfies PlausibleOptions,
     ],
     [
-      '@homotechsual/docusaurus-og',
+      ogPlugin,
       {
         path: 'og-images',
         imageRenderers: {

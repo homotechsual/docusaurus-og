@@ -29,6 +29,13 @@ shows how the renderer uses local PNG and SVG backgrounds, including a
 generated SVG-background preview. Images are generated during the production
 build, so the preview is not available during `yarn start`.
 
+The demo homepage displays the package version and links to the current release.
+Plausible tracking is configured for `og.docusaurus.homotechsual.dev`; analytics
+are demo-only and are not enabled automatically for plugin consumers.
+
+After building the package, run `yarn test` to verify that its compiled runtime
+imports are declared as dependencies or peer dependencies.
+
 ## Installation
 
 Requires Node.js 22 or later.

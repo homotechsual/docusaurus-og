@@ -1,6 +1,6 @@
 {
     "name": "@homotechsual/docusaurus-og",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Docusaurus OpenGraph image plugin",
     "main": "lib/index.js",
     "homepage": "https://github.com/homotechsual/docusaurus-og#readme",
@@ -24,11 +24,13 @@
     },
     "scripts": {
         "build": "tsc --build",
+        "test": "node --test test/package.test.mjs",
         "watch": "tsc --build --watch",
         "prepublishOnly": "yarn build"
     },
     "dependencies": {
         "@docusaurus/core": "^3.10.2",
+        "@docusaurus/logger": "^3.10.2",
         "@docusaurus/module-type-aliases": "^3.10.2",
         "@docusaurus/plugin-content-blog": "^3.10.2",
         "@docusaurus/types": "^3.10.2",
@@ -42,17 +44,21 @@
         "lodash": "^4.18.1",
         "node-html-parser": "^9.0.7",
         "object-hash": "^3.0.0",
-        "satori": "^0.63.2"
+        "satori": "^0.63.2",
+        "tslib": "^2.8.1"
+    },
+    "peerDependencies": {
+        "react": "^18.0.0 || ^19.0.0"
     },
     "engines": {
         "node": ">=22"
     },
     "devDependencies": {
-        "@docusaurus/logger": "^3.10.2",
         "@docusaurus/plugin-content-docs": "^3.10.2",
         "@docusaurus/plugin-content-pages": "^3.10.2",
         "@types/cli-progress": "^3.11.6",
         "@types/lodash": "^4.17.27",
+        "react": "^19.3.1",
         "typescript": "^6.0.3"
     },
     "packageManager": "yarn@4.17.1+sha512.ccbfabf7d7b6b32075088be9386fb9a2e00bb6887ef07fa56effabc890a56d53da1ccc4128d62db245fcbd3961b236d75335bdf7d5320ed6eafb7588b7ad4697",
