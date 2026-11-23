@@ -27,3 +27,6 @@ lerna-debug.log
 packages/docusaurus-playground/static/generated/*
 
 tsconfig.tsbuildinfo
+
+# Generated DocSense search indexes
+/demo/static/docsense/

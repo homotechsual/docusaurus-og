@@ -23,6 +23,7 @@ const config: Config = {
     locales: ['en'],
   },
   plugins: [
+    './plugins/docsense.cjs',
     [
       plausiblePlugin,
       {
